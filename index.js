@@ -23,12 +23,33 @@ async function run() {
 
         // create data base 
         const database = client.db("doctors_portal");
-        const appoinmentsCollection = database.collection("appoinments")
+        const appoinmentsCollection = database.collection("appoinments");
+        const usersCollection = database.collection("userCollection");
         console.log("db success");
+
+
+
+        app.get('/appoinments', async (req, res) => {
+            const email = req?.query?.email;
+            const date = new Date(req.query.date)?.toLocaleDateString();
+            const query = { email: email, date: date }
+            console.log(query)
+            const cursor = appoinmentsCollection.find(query);
+            const appoinments = await cursor.toArray();
+            res.json(appoinments);
+
+        })
 
         app.post('/appoinments', async (req, res) => {
             const appoinment = req.body;
             const result = await appoinmentsCollection.insertOne(appoinment);
+            console.log(result);
+            res.json(result);
+
+        });
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
             console.log(result);
             res.json(result);
 
